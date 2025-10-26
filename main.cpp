@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <list>
+#include <algorithm>
 #include <chrono>
 using namespace std;
 using namespace std::chrono;
@@ -13,6 +14,10 @@ void vectorracer(const string filename, vector<string> &vect);
 void listracer(const string filename, list<string> &list);
 void setracer(const string filename, set<string> &set);
 
+struct Durations {
+    milliseconds read, sort, insert, delet;
+};
+
 int main() {
     string filename = "codes.txt";
     vector<string> vect;
@@ -20,20 +25,18 @@ int main() {
     set<string> set;
     
     cout << "Test111" << endl;
-    milliseconds vreadduration, lreadduration, sreadduration; //Read durations
-    milliseconds vsortduration, lsortduration, ssortduration;
-    milliseconds vinsertduration, linsertduration, sinsertduration;
-    milliseconds vdeleteduration, ldeleteduration, sdeleteduration;
+    int ssortduration = -1;
+    
 
-    vreadduration, vsortduration, vinsertduration, vdeleteduration = vectorracer(filename, vect);
-    lreadduration, lsortduration, linsertduration, ldeleteduration = listracer(filename, list);
-    sreadduration, ssortduration, sinsertduration, sdeleteduration = setracer(filename, set);
+    Durations vDur = vectorracer(filename, vect);
+    Durations lDur = listracer(filename, list);
+    Durations sDur = setracer(filename, set);
 
     cout << "Time taken: " <<  << " milliseconds" << endl;
     return 0;
 }
 
-milliseconds vectorreader(const string &filename, vector<string> &vect) {
+Durations vectorreader(const string &filename, vector<string> &vect) {
     //Read
     ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -45,13 +48,8 @@ milliseconds vectorreader(const string &filename, vector<string> &vect) {
     auto readduration = duration_cast<milliseconds>(end - start);
 
     //Sort
-    ifstream file(filename);
     auto start = high_resolution_clock::now();
-    string value;
-    while (file >> value) {
-        vect.sort();
-    };
-    auto end = high_resolution_clock::now();
+    sort(vect.begin(), vect.end());
     auto sortduration = duration_cast<milliseconds>(end - start);
 
     //Insert
@@ -69,10 +67,16 @@ milliseconds vectorreader(const string &filename, vector<string> &vect) {
     auto end = high_resolution_clock::now();
     auto deleteduration = duration_cast<milliseconds>(end - start);
 
-    return readduration, sortduration, insertduration, deleteduration;
+    //Struct duration set
+    Durations dur;
+    dur.read = readduration;
+    dur.sort = sortduration;
+    dur.insert = insertduration;
+    dur.delet = deleteduration;
+    return dur;
 }
 
-milliseconds setreader(const string &filename, set<string> &set) {
+Durations setreader(const string &filename, set<string> &set) {
     //Read
      ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -83,10 +87,30 @@ milliseconds setreader(const string &filename, set<string> &set) {
     auto end = high_resolution_clock::now();
     auto readduration = duration_cast<milliseconds>(end - start);
 
-    return readduration;
+    //Insert
+    value = "TESTCODE";
+    auto start = high_resolution_clock::now();
+    auto it = set.begin();
+    advance(it, set.size() / 2);
+    set.insert(it, value);
+    auto end = high_resolution_clock::now();
+    auto insertduration = duration_cast<milliseconds>(end - start);
+
+    //Delete
+    auto start = high_resolution_clock::now();
+    set.erase(it);
+    auto end = high_resolution_clock::now();
+    auto deleteduration = duration_cast<milliseconds>(end - start);
+
+    //Struct duration set
+    Durations dur;
+    dur.read = readduration;
+    dur.insert = insertduration;
+    dur.delet = deleteduration;
+    return dur;
 }
 
-milliseconds listreader(const string &filename, list<string> &list) {
+Durations listreader(const string &filename, list<string> &list) {
     //Read
     ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -98,12 +122,8 @@ milliseconds listreader(const string &filename, list<string> &list) {
     auto readduration = duration_cast<milliseconds>(end - start);
 
     //Sort
-    ifstream file(filename);
     auto start = high_resolution_clock::now();
-    string value;
-    while (file >> value) {
-        list.sort();
-    };
+    list.sort();
     auto end = high_resolution_clock::now();
     auto sortduration = duration_cast<milliseconds>(end - start);
 
@@ -122,5 +142,11 @@ milliseconds listreader(const string &filename, list<string> &list) {
     auto end = high_resolution_clock::now();
     auto deleteduration = duration_cast<milliseconds>(end - start);
 
-    return readduration, sortduration, insertduration, deleteduration;
+    //Struct duration set
+    Durations dur;
+    dur.read = readduration;
+    dur.sort = sortduration;
+    dur.insert = insertduration;
+    dur.delet = deleteduration;
+    return dur;
 }
