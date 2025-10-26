@@ -21,22 +21,21 @@ int main() {
     
     cout << "Test111" << endl;
     milliseconds vreadduration, lreadduration, sreadduration; //Read durations
-    milliseconds vsortduration, lsortduration;
+    milliseconds vsortduration, lsortduration, ssortduration;
     milliseconds vinsertduration, linsertduration, sinsertduration;
     milliseconds vdeleteduration, ldeleteduration, sdeleteduration;
-    
-    vduration = vectorracer(filename, vect);
-    lduration = listracer(filename, list);
-    sduration = setracer(filename, set);
+
+    vreadduration, vsortduration, vinsertduration, vdeleteduration = vectorracer(filename, vect);
+    lreadduration, lsortduration, linsertduration, ldeleteduration = listracer(filename, list);
+    sreadduration, ssortduration, sinsertduration, sdeleteduration = setracer(filename, set);
 
     cout << "Time taken: " <<  << " milliseconds" << endl;
     return 0;
 }
 
 milliseconds vectorreader(const string &filename, vector<string> &vect) {
-    ifstream file(filename);
- 
     //Read
+    ifstream file(filename);
     auto start = high_resolution_clock::now();
     string value;
     while (file >> value) {
@@ -45,13 +44,37 @@ milliseconds vectorreader(const string &filename, vector<string> &vect) {
     auto end = high_resolution_clock::now();
     auto readduration = duration_cast<milliseconds>(end - start);
 
-    return readduration;
+    //Sort
+    ifstream file(filename);
+    auto start = high_resolution_clock::now();
+    string value;
+    while (file >> value) {
+        vect.sort();
+    };
+    auto end = high_resolution_clock::now();
+    auto sortduration = duration_cast<milliseconds>(end - start);
+
+    //Insert
+    value = "TESTCODE";
+    auto start = high_resolution_clock::now();
+    auto it = vect.begin();
+    advance(it, vect.size() / 2);
+    vect.insert(it, value);
+    auto end = high_resolution_clock::now();
+    auto insertduration = duration_cast<milliseconds>(end - start);
+
+    //Delete
+    auto start = high_resolution_clock::now();
+    vect.erase(it);
+    auto end = high_resolution_clock::now();
+    auto deleteduration = duration_cast<milliseconds>(end - start);
+
+    return readduration, sortduration, insertduration, deleteduration;
 }
 
 milliseconds setreader(const string &filename, set<string> &set) {
-    ifstream file(filename);
-    
     //Read
+     ifstream file(filename);
     auto start = high_resolution_clock::now();
     string value;
     while (file >> value) {
@@ -87,10 +110,17 @@ milliseconds listreader(const string &filename, list<string> &list) {
     //Insert
     value = "TESTCODE";
     auto start = high_resolution_clock::now();
-    int middle = list.end() - list.begin();
-    list.insert(middle, value);
+    auto it = list.begin();
+    advance(it, list.size() / 2);
+    list.insert(it, value);
     auto end = high_resolution_clock::now();
-    auto sortduration = duration_cast<milliseconds>(end - start);
+    auto insertduration = duration_cast<milliseconds>(end - start);
 
-    return readduration, sortduration;
+    //Delete
+    auto start = high_resolution_clock::now();
+    list.erase(it);
+    auto end = high_resolution_clock::now();
+    auto deleteduration = duration_cast<milliseconds>(end - start);
+
+    return readduration, sortduration, insertduration, deleteduration;
 }
