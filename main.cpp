@@ -17,6 +17,7 @@ struct Durations {
 Durations vectorracer(const string filename, vector<string> &vect);
 Durations listracer(const string filename, list<string> &list);
 Durations setracer(const string filename, set<string> &set);
+void output(Durations v, Durations l, Durations s);
 
 int main() {
     string filename = "codes.txt";
@@ -24,22 +25,16 @@ int main() {
     list<string> list;
     set<string> set;
     
-    cout << "testers" << endl;
-    int ssortduration = -1;
     Durations vDur = vectorracer(filename, vect);
     Durations lDur = listracer(filename, list);
     Durations sDur = setracer(filename, set);
 
-    //Output
-    /*cout << "Operation\tVector\tList\tSet" << endl;
-    cout << "Read\t" << vDur.read.count() << "\t" << lDur.read.count() << "\t" << sDur.read.count() << endl;
-    cout << "Sort\t" << vDur.sort.count() << "\t" << lDur.sort.count() << "\t" << ssortduration << endl;
-    cout << "Insert\t" << vDur.insert.count() << "\t" << lDur.insert.count() << "\t" << sDur.insert.count() << endl;
-    cout << "Delete\t" << vDur.delet.count() << "\t" << lDur.delet.count() << "\t" << sDur.delet.count() << endl;
-    */return 0;
+    output(vDur, lDur, sDur);
+
+    return 0;
 }
 
-Durations vectorreader(const string &filename, vector<string> &vect) {
+Durations vectorracer(const string filename, vector<string> &vect) {
     //Read
     ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -67,6 +62,7 @@ Durations vectorreader(const string &filename, vector<string> &vect) {
 
     //Delete
     start = high_resolution_clock::now();
+    it = vect.begin();
     vect.erase(it);
     end = high_resolution_clock::now();
     auto deleteduration = duration_cast<milliseconds>(end - start);
@@ -80,7 +76,7 @@ Durations vectorreader(const string &filename, vector<string> &vect) {
     return dur;
 }
 
-Durations setreader(const string &filename, set<string> &set) {
+Durations setracer(const string filename, set<string> &set) {
     //Read
      ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -102,6 +98,7 @@ Durations setreader(const string &filename, set<string> &set) {
 
     //Delete
     start = high_resolution_clock::now();
+    it = set.begin();
     set.erase(it);
     end = high_resolution_clock::now();
     auto deleteduration = duration_cast<milliseconds>(end - start);
@@ -114,7 +111,7 @@ Durations setreader(const string &filename, set<string> &set) {
     return dur;
 }
 
-Durations listreader(const string &filename, list<string> &list) {
+Durations listracer(const string filename, list<string> &list) {
     //Read
     ifstream file(filename);
     auto start = high_resolution_clock::now();
@@ -142,6 +139,7 @@ Durations listreader(const string &filename, list<string> &list) {
 
     //Delete
     start = high_resolution_clock::now();
+    it = list.begin();
     list.erase(it);
     end = high_resolution_clock::now();
     auto deleteduration = duration_cast<milliseconds>(end - start);
@@ -153,4 +151,15 @@ Durations listreader(const string &filename, list<string> &list) {
     dur.insert = insertduration;
     dur.delet = deleteduration;
     return dur;
+}
+
+//Outputs the three different durations
+void output(Durations vDur, Durations lDur, Durations sDur) {
+    //Output
+    int ssortduration = -1;
+    cout << "Operation    Vector\tList\tSet" << endl;
+    cout << "Read\t\t" << vDur.read.count() << "\t" << lDur.read.count() << "\t" << sDur.read.count() << endl;
+    cout << "Sort\t\t" << vDur.sort.count() << "\t" << lDur.sort.count() << "\t" << ssortduration << endl;
+    cout << "Insert\t\t" << vDur.insert.count() << "\t" << lDur.insert.count() << "\t" << sDur.insert.count() << endl;
+    cout << "Delete\t\t" << vDur.delet.count() << "\t" << lDur.delet.count() << "\t" << sDur.delet.count() << endl;
 }
